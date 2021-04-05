@@ -1,23 +1,24 @@
 import { Router } from 'express';
-import { v4 as uuid } from 'uuid';
+
+import CreateUserService from '../services/CreateUserService';
 
 const usersRouter = Router();
 
-const users = [];
-
-usersRouter.post('/', (request, response) => {
+usersRouter.post('/', async (request, response) => {
   const { name, email, password } = request.body;
 
-  const user = {
-    id: uuid(),
+  const createUser = new CreateUserService();
+
+  const user = await createUser.execute({
     name,
     email,
     password
-  };
+  });
 
-  users.push(user);
+  // @ts-expect-error
+  delete user.password;
 
-  return response.json({user});
+  return response.json(user);
 });
 
 export default usersRouter;
